@@ -1,18 +1,15 @@
 export default {
     data() {
-        return {
-            gapi: null,
-        }
+        return {}
     },
     methods: {
-        processInput(input) {
+        processInput(input, gapi) {
             let intent = input.intents[0].name;
             let entities = input.entities;
             let trait = input.traits;
-
             // User's intention is to add only one class
             if (intent === 'single_class_event') {
-                return this.processSingeClassEvent(entities)
+                return this.processSingeClassEvent(entities, gapi)
             }
 
             // User's intention is to create a recurring course schedule
@@ -30,7 +27,7 @@ export default {
                 return this.processEventCancel(entities)
             }
         },
-        processSingeClassEvent(entities) {
+        processSingeClassEvent(entities, gapi) {
             let eventDetails = {};
             let courseName = entities['course_name:course_name'][0].body.toUpperCase()
             courseName = courseName.replace(/ /g, "")
@@ -44,12 +41,12 @@ export default {
             eventDetails.end.setHours(eventDetails.start.getHours() + 1)
             eventDetails.end.setMinutes(eventDetails.start.getMinutes() + 15)
             eventDetails.summary = `${courseName} - Lecture`
-            eventDetails.description = `${courseName} lecture added to calendar by Skéj.\n Event ID: skej#${eventDetails.name}/${Math.floor(Math.random() * 10001)}`
+            eventDetails.description = `${courseName} lecture added to calendar by Skéj.\n Event ID: skej#${eventDetails.courseName}/${Math.floor(Math.random() * 10001)}`
             eventDetails.start = { dateTime: eventDetails.start, timeZone: 'America/New_York' }
             eventDetails.end = { dateTime: eventDetails.end, timeZone: 'America/New_York' }
-
-            //TODO: FINISH GAPI
-            gapi.client.calendar.events.insert(eventDetails)
+            gapi.client.calendar.events.insert({ calendarId: this.$store.state.calendarId }, JSON.stringify(eventDetails)).execute((ev) => {
+                console.log(ev);
+            })
             return eventDetails;
         },
         processCourseSchedule(entities) {

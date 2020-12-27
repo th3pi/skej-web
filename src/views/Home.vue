@@ -87,7 +87,6 @@ export default {
   methods: {
     login() {
       this.$gapi.getGapiClient().then((gapi) => {
-        this.gapi = gapi;
         gapi.auth2
           .getAuthInstance()
           .signIn()
@@ -143,8 +142,9 @@ export default {
         },
       }).then((res) => {
         //TODO: FINISH SEMND MESSAGE
-
-        console.log(this.processInput(res.data));
+        this.$gapi.getGapiClient().then((gapi) => {
+          console.log(this.processInput(res.data, gapi));
+        });
       });
     },
   },
