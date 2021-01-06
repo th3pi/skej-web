@@ -1,9 +1,14 @@
+import { EventBus } from "@/bus/bus";
+
 export default {
     data() {
-        return {}
+        return {
+            gapi: null,
+        }
     },
     methods: {
         processInput(input, gapi) {
+            this.gapi = gapi;
             let intent = input.intents[0].name;
             let entities = input.entities;
             let trait = input.traits;
@@ -27,7 +32,7 @@ export default {
                 return this.processEventCancel(entities)
             }
         },
-        processSingeClassEvent(entities, gapi) {
+        processSingeClassEvent(entities) {
             let eventDetails = {};
             let courseName = entities['course_name:course_name'][0].body.toUpperCase()
             courseName = courseName.replace(/ /g, "")
@@ -41,13 +46,15 @@ export default {
             eventDetails.end.setHours(eventDetails.start.getHours() + 1)
             eventDetails.end.setMinutes(eventDetails.start.getMinutes() + 15)
             eventDetails.summary = `${courseName} - Lecture`
-            eventDetails.description = `${courseName} lecture added to calendar by Skéj.\n Event ID: skej#${eventDetails.courseName}/${Math.floor(Math.random() * 10001)}`
+            eventDetails.description = `${courseName} lecture added to calendar by Skéj.\nEvent ID: skej#${eventDetails.courseName}/${Math.floor(Math.random() * 10001)}`
             eventDetails.start = { dateTime: eventDetails.start, timeZone: 'America/New_York' }
             eventDetails.end = { dateTime: eventDetails.end, timeZone: 'America/New_York' }
-            gapi.client.calendar.events.insert({ calendarId: this.$store.state.calendarId }, JSON.stringify(eventDetails)).execute((ev) => {
-                console.log(ev);
+            this.gapi.client.calendar.events.insert({ calendarId: this.$store.state.calendarId }, JSON.stringify(eventDetails)).then((ev) => {
+                EventBus.$emit("added-event", ev)
+            }).catch((err) => {
+                console.log(err);
+                EventBus.$emit("failed-event", err)
             })
-            return eventDetails;
         },
         processCourseSchedule(entities) {
             let days = []
@@ -64,10 +71,17 @@ export default {
             eventDetails.end = new Date(startDate);
             eventDetails.end.setHours(eventDetails.start.getHours() + 1)
             eventDetails.end.setMinutes(eventDetails.start.getMinutes() + 15)
-            eventDetails.name = `${courseName} - Lecture`
-            eventDetails.description = `Recurring ${courseName} lecture added to calendar by Skéj.\n Event ID: skej#${eventDetails.name}/${Math.floor(Math.random() * 10001)}`
-            eventDetails.recurrence = rRule;
-            return eventDetails
+            eventDetails.summary = `${courseName} - Lecture`
+            eventDetails.description = `Recurring ${courseName} lecture added to calendar by Skéj.\n Event ID: skej#${eventDetails.courseName}/${Math.floor(Math.random() * 10001)}`
+            eventDetails.recurrence = [rRule];
+            eventDetails.start = { dateTime: eventDetails.start, timeZone: 'America/New_York' }
+            eventDetails.end = { dateTime: eventDetails.end, timeZone: 'America/New_York' }
+            this.gapi.client.calendar.events.insert({ calendarId: this.$store.state.calendarId }, JSON.stringify(eventDetails)).then((ev) => {
+                EventBus.$emit("added-event", ev)
+            }).catch((err) => {
+                console.log(err);
+                EventBus.$emit("failed-event", err)
+            })
         },
         processWorkDue(entities, trait) {
             let eventDetails = {};
@@ -96,7 +110,13 @@ export default {
                 eventDetails.name = `[!] ${courseName} - ${eventDetails.type}`;
             }
             eventDetails.description = `${eventDetails.name} added to calendar by Skéj. \n`;
-            return eventDetails;
+            this.gapi.client.calendar.events.insert({ calendarId: this.$store.state.calendarId }, JSON.stringify(eventDetails)).then((ev) => {
+                EventBus.$emit("added-event", ev)
+            }).catch((err) => {
+                console.log(err);
+
+                EventBus.$emit("failed-event", err)
+            })
         },
         getStartDate(input, daysArray) {
             if (input == '') return null;
