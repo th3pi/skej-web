@@ -4,7 +4,6 @@ import router from './router'
 import VueGapi from 'vue-gapi'
 import store from './store'
 import axios from 'axios'
-import 'vue2-animate/dist/vue2-animate.min.css'
 
 Vue.prototype.$http = axios;
 Vue.config.productionTip = false

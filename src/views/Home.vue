@@ -38,66 +38,16 @@
     <div id="google_oauth">
       <!-- Authentication and User feedback button -->
       <!-- If user is not logged in -->
-      <input
-        id="authButton"
-        name="authButton"
-        class="button"
-        type="button"
-        v-if="status === 'notLoggedIn'"
-        v-on:click="login"
-        value="Login with Google Calendar"
-      />
-
-      <!-- If user is logged in -->
-      <input
-        id="authButton"
-        name="authButton"
-        class="button button-success"
-        type="button"
-        v-else-if="status === 'loggedIn'"
-        value="Connected"
-      />
-
-      <!-- If user authentication status is unknown -->
-      <input
-        id="authButton"
-        name="authButton"
-        class="button"
-        type="button"
-        v-else-if="status === null"
-        value="Checking..."
-      />
-
-      <!-- If user authentication fails -->
-      <input
-        id="authButton"
-        name="authButton"
-        class="button"
-        type="button"
-        v-else-if="status === 'loginFailed'"
-        :value="authButtonText"
-        v-on:click="login"
-      />
-
-      <!-- If user event add was successful -->
-      <input
-        id="authButton"
-        name="authButton"
-        class="button button-success"
-        type="button"
-        v-else-if="status === 'added'"
-        :value="authButtonText"
-      />
-
-      <!-- If user event add failed -->
-      <input
-        id="authButton"
-        name="authButton"
-        class="button button-error"
-        type="button"
-        v-else-if="status === 'addFailed'"
-        :value="authButtonText"
-      />
+      <fade-transition mode="out-in" :duration="200">
+        <input
+          id="authButton"
+          name="authButton"
+          class="button"
+          type="button"
+          :value="authButtonText"
+          v-on:click="authButtonAction"
+        />
+      </fade-transition>
 
       <!-- Logout button -->
       <input
@@ -116,10 +66,11 @@
 <script>
 import input_processor from "@/mixins/input_processor.js";
 import { EventBus } from "@/bus/bus";
+import { FadeTransition } from "vue2-transitions";
 
 export default {
   name: "Home",
-  components: {},
+  components: { FadeTransition },
   mixins: [input_processor],
   data() {
     return {
@@ -231,6 +182,7 @@ export default {
     sendButtonAction() {
       this.q = "";
     },
+    authButtonAction() {},
   },
   watch: {
     /**
@@ -243,17 +195,26 @@ export default {
         document.title = "Skéj - Connected";
         this.authButtonText = "Connected";
         this.authStatus = true;
+        this.sendButtonText = "Submit";
+        this.eventLink = null;
+        authButton.className = "button button-success";
       } else if (current === "notLoggedIn") {
-        this.authButtonText = "Log in with Google Calendar";
+        this.authButtonText = "Login with Google Calendar";
         this.authStatus = false;
         authButton.className = "button";
+        this.authButtonAction = this.login;
       } else if (current === "added") {
         this.authButtonText = "Added!";
         this.sendButtonText = "Open Event";
         this.sendButtonAction = this.openEvent;
+        authButton.className = "button button-success";
       } else if (current === "addFailed") {
         this.authButtonText = "Oops, that didn't work";
         this.sendButtonText = "Clear";
+        authButton.className = "button button-error";
+      } else if (current === null) {
+        this.authButtonText = "Checking...";
+        authButton.className = "button";
       }
     },
     q(current) {

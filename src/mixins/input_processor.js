@@ -52,7 +52,6 @@ export default {
             this.gapi.client.calendar.events.insert({ calendarId: this.$store.state.calendarId }, JSON.stringify(eventDetails)).then((ev) => {
                 EventBus.$emit("added-event", ev)
             }).catch((err) => {
-                console.log(err);
                 EventBus.$emit("failed-event", err)
             })
         },
@@ -79,10 +78,10 @@ export default {
             this.gapi.client.calendar.events.insert({ calendarId: this.$store.state.calendarId }, JSON.stringify(eventDetails)).then((ev) => {
                 EventBus.$emit("added-event", ev)
             }).catch((err) => {
-                console.log(err);
                 EventBus.$emit("failed-event", err)
             })
         },
+
         processWorkDue(entities, trait) {
             let eventDetails = {};
             let courseName = entities['course_name:course_name'][0].body.toUpperCase();
@@ -102,19 +101,19 @@ export default {
             eventDetails.type = this.capitalize(eventDetails.type);
             if (trait.priority[0].value === 'normal') { // Normal priority work
                 if (entities['event:iteration']) {
-                    eventDetails.name = `${courseName} - ${eventDetails.type} ${entities['event:iteration'][0].body}`;
+                    eventDetails.summary = `${courseName} - ${eventDetails.type} ${entities['event:iteration'][0].body}`;
                 } else {
-                    eventDetails.name = `${courseName} - ${eventDetails.type}`;
+                    eventDetails.summary = `${courseName} - ${eventDetails.type}`;
                 }
             } else if (trait.priority[0].value === 'high') { // High priority work
-                eventDetails.name = `[!] ${courseName} - ${eventDetails.type}`;
+                eventDetails.summary = `[!] ${courseName} - ${eventDetails.type}`;
             }
-            eventDetails.description = `${eventDetails.name} added to calendar by Skéj. \n`;
+            eventDetails.description = `${eventDetails.summary} added to calendar by Skéj. \n`;
+            eventDetails.start = { dateTime: eventDetails.start, timeZone: 'America/New_York' }
+            eventDetails.end = { dateTime: eventDetails.end, timeZone: 'America/New_York' }
             this.gapi.client.calendar.events.insert({ calendarId: this.$store.state.calendarId }, JSON.stringify(eventDetails)).then((ev) => {
                 EventBus.$emit("added-event", ev)
             }).catch((err) => {
-                console.log(err);
-
                 EventBus.$emit("failed-event", err)
             })
         },
