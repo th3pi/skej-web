@@ -23,19 +23,8 @@
         class="button"
         type="button"
         v-on:click="sendButtonAction"
-        v-if="status !== 'added'"
         :value="sendButtonText"
-        :disabled="!qStatus"
-      />
-
-      <!-- If event gets successfully added -->
-      <input
-        id="sendButton"
-        class="button"
-        type="button"
-        v-else-if="status === 'added'"
-        :value="sendButtonText"
-        v-on:click="sendButtonAction"
+        disabled
       />
     </div>
     <div id="google_oauth">
@@ -218,11 +207,19 @@ export default {
     /**
      * Updates UI elements after a process is complete
      */
-    done(message, authButtonClass, sendButtonMessage, sendButtonAction) {
+    done(
+      message,
+      authButtonClass,
+      sendButtonMessage,
+      sendButtonAction,
+      sendButtonDisabled = false
+    ) {
       let authButton = document.getElementById("authButton");
       let sendButton = document.getElementById("sendButton");
       let q = document.getElementById("q");
-      sendButton.removeAttribute("disabled");
+      if (sendButtonDisabled === false) {
+        sendButton.removeAttribute("disabled");
+      }
       q.removeAttribute("disabled");
       this.authButtonText = message;
       this.sendButtonText = sendButtonMessage;
@@ -241,6 +238,9 @@ export default {
         this.status = "reachedFirst";
       }
     },
+    /**
+     * Gets next input
+     */
     getNextInput() {
       if (this.qCursor < this.$store.state.inputs.length - 1) {
         this.qCursor++;
@@ -265,7 +265,8 @@ export default {
           "Connected",
           "button button-success",
           "Submit",
-          this.sendMessage
+          this.sendMessage,
+          true
         );
       } else if (current === "notLoggedIn") {
         this.authButtonText = "Login with Google Calendar";
@@ -319,10 +320,11 @@ export default {
       }
     },
     q(current) {
+      let sendButton = document.getElementById("sendButton");
       if (current.length < 10) {
-        this.qStatus = false;
+        sendButton.setAttribute("disabled", true);
       } else {
-        this.qStatus = true;
+        sendButton.removeAttribute("disabled");
       }
       // If an event was added and user makes changes to the user input, app status resets to allow user to submit another input
       if (this.status !== "loggedIn") {
