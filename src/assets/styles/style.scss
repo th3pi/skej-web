@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Caveat&family=Roboto+Condensed:wght@700&display=swap');
 :root {
-    --blue: #bcd4de;
-    --red: #fe5f55;
-    --yellow: #fe9355;
-    --dark-blue: #011936;
-    --light-blue: #0b79ff;
-    --green: #5b8c5a;
+    --blue: rgb(188, 212, 222);
+    --red: rgb(254, 95, 85);
+    --yellow: rgb(254, 147, 85);
+    --dark-blue: rgb(1, 25, 54);
+    --light-blue: rgb(11, 121, 255);
+    --green: rgb(91, 140, 90);
     --shadow: rgba(0, 0, 0, 0.25);
-    --purple: #f51f78;
+    --purple: rgb(245, 31, 120);
 }
 
 * {
@@ -43,7 +43,6 @@ body {
 
 p {
     opacity: 0.7;
-    margin: 10px 0;
     size: .9rem;
 }
 
@@ -62,7 +61,6 @@ h1 {
 h3 {
     color: var(--dark-blue);
     font-size: 1.1rem;
-    text-shadow: .5px .5px 0px var(--light-blue), -.75px -.75px 0px var(--purple);
 }
 
 .button {
