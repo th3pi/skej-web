@@ -5,8 +5,10 @@
     --red: #fe5f55;
     --yellow: #fe9355;
     --dark-blue: #011936;
+    --light-blue: #0b79ff;
     --green: #5b8c5a;
     --shadow: rgba(0, 0, 0, 0.25);
+    --purple: #f51f78;
 }
 
 * {
@@ -41,7 +43,8 @@ body {
 
 p {
     opacity: 0.7;
-    margin: 0;
+    margin: 10px 0;
+    size: .9rem;
 }
 
 h1,
@@ -54,6 +57,12 @@ h2 {
 
 h1 {
     font-size: 4rem;
+}
+
+h3 {
+    color: var(--dark-blue);
+    font-size: 1.1rem;
+    text-shadow: .5px .5px 0px var(--light-blue), -.75px -.75px 0px var(--purple);
 }
 
 .button {
@@ -135,4 +144,50 @@ h1 {
     margin: 5px 5px;
     border: 2px solid transparent;
     outline: none;
+}
+
+// Date picker styles override
+.ve-dp-body--months__values--item {
+    transition: 0.3s;
+}
+
+.ve-dp-body--months__values--item:hover {
+    background: var(--dark-blue) !important;
+    opacity: 0.7;
+    color: #fff !important;
+}
+
+.ve-dp-body--months__values--item--active:hover {
+    background: var(--dark-blue) !important;
+    opacity: 0.85;
+}
+
+.ve-dp-body--years__item {
+    transition: 0.3s;
+}
+
+.ve-dp-body--years__item:hover {
+    background: var(--dark-blue) !important;
+    opacity: 0.7;
+    color: #fff !important;
+}
+
+.ve-dp-body--years__item--active:hover {
+    background: var(--dark-blue) !important;
+    opacity: 0.85;
+}
+
+.ve-dp-body--days__values--item {
+    transition: 0.3s;
+}
+
+.ve-dp-body--days__values--item:hover {
+    background: var(--dark-blue) !important;
+    opacity: 0.7;
+    color: #fff !important;
+}
+
+.ve-dp-body--days__values--item--active:hover {
+    background: var(--dark-blue) !important;
+    opacity: 0.85;
 }

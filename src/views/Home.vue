@@ -185,6 +185,9 @@ export default {
     openEvent() {
       window.open(this.eventLink);
     },
+    /**
+     * Clears the input field
+     */
     clear() {
       this.q = "";
     },
