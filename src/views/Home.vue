@@ -11,6 +11,9 @@
         type="text"
         placeholder="Ex: I have a CS340 class at 5:40pm on Fridays and Saturdays"
         v-model="q"
+        v-on:keyup.enter="sendButtonAction"
+        v-on:keydown.up="getPrevInput"
+        v-on:keydown.down="getNextInput"
       />
 
       <!-- Send button sends processes user input -->
@@ -19,7 +22,7 @@
         id="sendButton"
         class="button"
         type="button"
-        v-on:click="sendMessage"
+        v-on:click="sendButtonAction"
         v-if="status !== 'added'"
         :value="sendButtonText"
         :disabled="!qStatus"
@@ -81,6 +84,7 @@ export default {
       qStatus: false, // User input text field status
       sendButtonText: "Submit", // User input text field submit button
       eventLink: null, // Event link after it gets added to calendar
+      qCursor: this.$store.state.inputs.length, // Cursor to indicate index of current input
     };
   },
   methods: {
@@ -156,18 +160,34 @@ export default {
           Authorization: "Bearer NPZBD422SPC72CZGL2ITSYJYKJC4ION6",
         },
       }).then((res) => {
+        this.$store.commit("addInput", this.q);
+        this.qCursor = this.$store.state.inputs.length;
         this.$gapi.getGapiClient().then((gapi) => {
           this.processInput(res.data, gapi);
-          EventBus.$on("added-event", (data) => {
-            if (data.result.status === "confirmed") {
-              this.status = "added";
-              this.eventLink = data.result.htmlLink;
-            } else {
-              this.status = "addFailed";
-              this.authButtonText = "Oops, that didn't work";
-            }
-          });
         });
+      });
+    },
+    /**
+     * Event listeners and handlers
+     */
+    eventListeners() {
+      EventBus.$on("adding-event", () => {
+        this.status = "adding";
+      });
+      EventBus.$on("deleting-events", () => {
+        this.status = "deleting";
+      });
+      EventBus.$on("deleted-events", () => {
+        this.status = "deleted";
+      });
+      EventBus.$on("added-event", (data) => {
+        if (data.result.status === "confirmed") {
+          this.status = "added";
+          this.eventLink = data.result.htmlLink;
+        } else {
+          this.status = "addFailed";
+          this.authButtonText = "Oops, that didn't work";
+        }
       });
     },
     /**
@@ -179,10 +199,56 @@ export default {
     clear() {
       this.q = "";
     },
-    sendButtonAction() {
-      this.q = "";
-    },
+    sendButtonAction() {},
     authButtonAction() {},
+    /**
+     * Updates UI elements to show loading messages
+     */
+    wait(message) {
+      let authButton = document.getElementById("authButton");
+      let sendButton = document.getElementById("sendButton");
+      let q = document.getElementById("q");
+      this.authButtonText = message;
+      this.authButtonAction = function () {};
+      this.sendButtonAction = function () {};
+      sendButton.setAttribute("disabled", true);
+      q.setAttribute("disabled", true);
+      authButton.className = "button button-working";
+    },
+    /**
+     * Updates UI elements after a process is complete
+     */
+    done(message, authButtonClass, sendButtonMessage, sendButtonAction) {
+      let authButton = document.getElementById("authButton");
+      let sendButton = document.getElementById("sendButton");
+      let q = document.getElementById("q");
+      sendButton.removeAttribute("disabled");
+      q.removeAttribute("disabled");
+      this.authButtonText = message;
+      this.sendButtonText = sendButtonMessage;
+      this.sendButtonAction = sendButtonAction;
+      q.focus();
+      authButton.className = authButtonClass;
+    },
+    /**
+     * Gets previous input
+     */
+    getPrevInput() {
+      if (this.qCursor > 0) {
+        this.qCursor--;
+        this.q = this.$store.state.inputs[this.qCursor];
+      } else {
+        this.status = "reachedFirst";
+      }
+    },
+    getNextInput() {
+      if (this.qCursor < this.$store.state.inputs.length - 1) {
+        this.qCursor++;
+        this.q = this.$store.state.inputs[this.qCursor];
+      } else {
+        this.status = "reachedLast";
+      }
+    },
   },
   watch: {
     /**
@@ -193,25 +259,60 @@ export default {
       let authButton = document.getElementById("authButton");
       if (current === "loggedIn") {
         document.title = "Skéj - Connected";
-        this.authButtonText = "Connected";
         this.authStatus = true;
-        this.sendButtonText = "Submit";
         this.eventLink = null;
-        authButton.className = "button button-success";
+        this.done(
+          "Connected",
+          "button button-success",
+          "Submit",
+          this.sendMessage
+        );
       } else if (current === "notLoggedIn") {
         this.authButtonText = "Login with Google Calendar";
         this.authStatus = false;
         authButton.className = "button";
         this.authButtonAction = this.login;
       } else if (current === "added") {
-        this.authButtonText = "Added!";
-        this.sendButtonText = "Open Event";
-        this.sendButtonAction = this.openEvent;
-        authButton.className = "button button-success";
+        this.done(
+          "Added!",
+          "button button-success",
+          "Open Event",
+          this.openEvent
+        );
+      } else if (current === "working") {
+        this.wait("Working...");
+      } else if (current === "adding") {
+        this.wait("Updating calendar...");
       } else if (current === "addFailed") {
-        this.authButtonText = "Oops, that didn't work";
-        this.sendButtonText = "Clear";
-        authButton.className = "button button-error";
+        this.done(
+          "Oops, that didn't work",
+          "button button-error",
+          "Clear",
+          this.clear
+        );
+      } else if (current === "deleting") {
+        this.wait("Removing events...");
+      } else if (current === "deleted") {
+        this.done(
+          "Removed events!",
+          "button button-success",
+          "Clear",
+          this.clear
+        );
+      } else if (current === "reachedFirst") {
+        this.done(
+          "That's the first thing you said",
+          "button button-error",
+          this.sendButtonText,
+          this.sendButtonAction
+        );
+      } else if (current === "reachedLast") {
+        this.done(
+          "That's the last thing you said",
+          "button button-error",
+          this.sendButtonText,
+          this.sendButtonAction
+        );
       } else if (current === null) {
         this.authButtonText = "Checking...";
         authButton.className = "button";
@@ -224,9 +325,8 @@ export default {
         this.qStatus = true;
       }
       // If an event was added and user makes changes to the user input, app status resets to allow user to submit another input
-      if (this.status === "added" || this.status === "addFailed") {
+      if (this.status !== "loggedIn") {
         this.status = "loggedIn";
-        this.sendButtonAction = this.sendMessage;
       }
     },
   },
@@ -243,6 +343,7 @@ export default {
         this.status = "notLoggedIn";
       }
     });
+    this.eventListeners();
   },
 };
 </script>

@@ -14,25 +14,30 @@ export default {
             let trait = input.traits;
             // User's intention is to add only one class
             if (intent === 'single_class_event') {
-                return this.processSingeClassEvent(entities, gapi)
+                this.processSingeClassEvent(entities, gapi)
             }
 
             // User's intention is to create a recurring course schedule
             else if (intent === 'course_schedule') {
-                return this.processCourseSchedule(entities)
+                this.processCourseSchedule(entities)
             }
 
             // User's intention is to add a work due event to the calendar
             else if (intent === 'work_due') {
-                return this.processWorkDue(entities, trait)
+                this.processWorkDue(entities, trait)
             }
 
             // User's intention to cancel event(s)
             else if (intent === 'event_cancel') {
-                return this.processEventCancel(entities)
+                this.processEventCancel(entities)
             }
         },
+        /**
+         * Processes one-off class event creation operations
+         * @param {Object} entities All the entities processed by the nlp
+         */
         processSingeClassEvent(entities) {
+            EventBus.$emit("adding-event")
             let eventDetails = {};
             let courseName = entities['course_name:course_name'][0].body.toUpperCase()
             courseName = courseName.replace(/ /g, "")
@@ -55,7 +60,12 @@ export default {
                 EventBus.$emit("failed-event", err)
             })
         },
+        /**
+         * Processes creating recurring class event operation for an entire semester
+         * @param {Object} entities All the entities processed by the nlp
+         */
         processCourseSchedule(entities) {
+            EventBus.$emit("adding-event")
             let days = []
             let eventDetails = {};
             let courseName = entities['course_name:course_name'][0].body.toUpperCase()
@@ -81,8 +91,13 @@ export default {
                 EventBus.$emit("failed-event", err)
             })
         },
-
+        /**
+         * Processes work due event creation, work (assignment, hw, lab, research paper etc.) and exam
+         * @param {Object} entities All the entities processed by the nlp
+         * @param {Object} trait Trait of the input sentence processed by the nlp
+         */
         processWorkDue(entities, trait) {
+            EventBus.$emit("adding-event")
             let eventDetails = {};
             let courseName = entities['course_name:course_name'][0].body.toUpperCase();
             courseName = courseName.replace(/ /g, "")
@@ -117,6 +132,94 @@ export default {
                 EventBus.$emit("failed-event", err)
             })
         },
+        /**
+         * Processes event cancel operations
+         * @param {Object} entities All the entities processed by the nlp
+         */
+        processEventCancel(entities) {
+            EventBus.$emit("deleting-events")
+            let eventType;
+            if (entities['event:class']) {
+                eventType = 'Lecture'
+            } else if (entities['event:work']) {
+                eventType = this.capitalize(entities['event:work'][0].value);
+            } else if (entities['event:exam']) {
+                eventType = this.capitalize(entities['event:exam'][0].value);
+            }
+            // If course name is all multiple events are going to be deleted, sometimes there maybe no course name but event type only e.g "I don't have any classes on Monday"
+            if (entities['course_name:all']) {
+                if (entities['wit$datetime:datetime']) {
+                    if (eventType) { // If event type is specified only delete those specific events in the day
+                        this.gapi.client.calendar.events.list({ calendarId: this.$store.state.calendarId, q: eventType }).then((list) => {
+                            list = list.result.items.filter(event => new Date(event.start.dateTime).toDateString() === new Date(entities['wit$datetime:datetime'][0].value).toDateString())
+                            list.forEach((event, i) => {
+                                this.gapi.client.calendar.events.delete({ calendarId: this.$store.state.calendarId, eventId: event.id }).then(() => {
+                                    if (i === list.length - 1) {
+                                        EventBus.$emit("deleted-events")
+                                    }
+                                }).catch(err => console.log(err))
+                            });
+                        })
+                    } else { // If event type is not specified delete all events in the day
+                        this.gapi.client.calendar.events.list({ calendarId: this.$store.state.calendarId }).then((list) => {
+                            list = list.result.items.filter(event => new Date(event.start.dateTime).toDateString() === new Date(entities['wit$datetime:datetime'][0].value).toDateString())
+                            list.forEach((event, i) => {
+                                this.gapi.client.calendar.events.delete({ calendarId: this.$store.state.calendarId, eventId: event.id }).then(() => {
+                                    if (i === list.length - 1) {
+                                        EventBus.$emit("deleted-events")
+                                    }
+                                }).catch(err => console.log(err))
+                            });
+                        })
+                    }
+                } else { // Unfortunately this extra if-else block is necessary because of how AI the responds sometimes
+                    if (eventType) { // If event type is specified only delete those specific events in the day
+                        this.gapi.client.calendar.events.list({ calendarId: this.$store.state.calendarId, q: eventType }).then((list) => {
+                            list = list.result.items.filter(event => new Date(event.start.dateTime).toDateString() === new Date(entities['wit$datetime:from'][0].value).toDateString())
+                            list.forEach((event, i) => {
+                                this.gapi.client.calendar.events.delete({ calendarId: this.$store.state.calendarId, eventId: event.id }).then(() => {
+                                    if (i === list.length - 1) {
+                                        EventBus.$emit("deleted-events")
+                                    }
+                                }).catch(err => console.log(err))
+                            });
+                        })
+                    } else { // If event type is not specified delete all events in the day
+                        this.gapi.client.calendar.events.list({ calendarId: this.$store.state.calendarId }).then((list) => {
+                            list = list.result.items.filter(event => new Date(event.start.dateTime).toDateString() === new Date(entities['wit$datetime:from'][0].value).toDateString())
+                            list.forEach((event, i) => {
+                                this.gapi.client.calendar.events.delete({ calendarId: this.$store.state.calendarId, eventId: event.id }).then(() => {
+                                    if (i === list.length - 1) {
+                                        EventBus.$emit("deleted-events")
+                                    }
+                                }).catch(err => console.log(err))
+                            });
+                        })
+                    }
+                }
+            } else { // Delete a single specific event
+                if (entities['wit$datetime:datetime']) {
+                    this.gapi.client.calendar.events.list({ calendarId: this.$store.state.calendarId, q: `${entities['course_name:course_name'][0].value.replace(/ /g,"")} - ${eventType}` }).then((list) => {
+                        let event = list.result.items.find(event => new Date(event.start.dateTime).toDateString() === new Date(entities['wit$datetime:datetime'][0].value).toDateString())
+                        this.gapi.client.calendar.events.delete({ calendarId: this.$store.state.calendarId, eventId: event.id }).then(() => {
+                            EventBus.$emit("deleted-events")
+                        }).catch(err => console.log(err))
+                    })
+                } else if (entities['wit$datetime:from']) {
+                    this.gapi.client.calendar.events.list({ calendarId: this.$store.state.calendarId, q: `${entities['course_name:course_name'][0].value.replace(/ /g,"")} - ${eventType}` }).then((list) => {
+                        let event = list.result.items.find(event => new Date(event.start.dateTime).toDateString() === new Date(entities['wit$datetime:from'][0].value).toDateString())
+                        this.gapi.client.calendar.events.delete({ calendarId: this.$store.state.calendarId, eventId: event.id }).then(() => {
+                            EventBus.$emit("deleted-events")
+                        }).catch(err => console.log(err))
+                    })
+                }
+            }
+        },
+        /**
+         * Figures out the earliest date this event will occur next
+         * @param {String} input time string input
+         * @param {Array} daysArray An array containing all the days in the week the event will occur
+         */
         getStartDate(input, daysArray) {
             if (input == '') return null;
 
@@ -136,6 +239,10 @@ export default {
             startDate.setDate(startDate.getDate() + ((7 - startDate.getDay()) % 7 + this.getDay(daysArray[0]) + 1) % 7);
             return startDate;
         },
+        /**
+         * Generates a recurrence rule string based off the schedule. Recurrence occurs until CUNY's last day of semester
+         * @param {Array} daysArray An array containing all the days in the week the event will occur
+         */
         convertToRRule(daysArray) {
             let recurrence = 'RRULE:FREQ=WEEKLY;BYDAY='
             for (let i = 0; i < daysArray.length - 1; i++) {
@@ -156,10 +263,18 @@ export default {
             recurrence += `;UNTIL=${untilDate}`
             return recurrence;
         },
+        /**
+         * Returns the same string back with first character capitalized
+         * @param {String} string A word
+         */
         capitalize(string) {
             if (typeof string !== 'string') return ''
             return string.charAt(0).toUpperCase() + string.slice(1)
         },
+        /**
+         * Returns the index number of a given day of the week
+         * @param {String} day Uppercase first two initials of the first day of the event's recurring schedule
+         */
         getDay(day) {
             switch (day) {
                 case 'SU':
@@ -180,6 +295,10 @@ export default {
                     return null;
             }
         },
+        /**
+         * Creates an ordered array of all the days the recurring event will occur, necessary for creating the recurrence rule
+         * @param {String} input Concatenated string of all the days found in the user's input
+         */
         getDays(input) {
             input = input.toUpperCase()
             let daysArray = []

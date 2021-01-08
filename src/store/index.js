@@ -9,7 +9,8 @@ export default new Vuex.Store({
         user: {
             name: String,
             email: String,
-        }
+        },
+        inputs: ['I have a CS355 class on Monday at 11pm', 'I have a CS355 class on Wednesday at 11pm', 'I have a CS355 class on Wednesday at 1pm'],
     },
     mutations: {
         saveCalendar(state, calendarId) {
@@ -23,6 +24,9 @@ export default new Vuex.Store({
             state.calendarId = null
             state.user.name = null
             state.user.email = null
+        },
+        addInput(state, input) {
+            state.inputs.push(input);
         }
     },
     actions: {},
