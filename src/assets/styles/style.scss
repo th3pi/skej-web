@@ -41,6 +41,10 @@ body {
     text-shadow: 0.5px .5px 0px #0b79ff, 1px 1px 0px #1f6dce, 1.5px 1.5px 0px #c4098c, -0.5px -.5px 0px #f51f78, -1px -1px 0px #f51f78, -1.5px -1.5px 0px #eb00a4;
 }
 
+a {
+    cursor: pointer;
+}
+
 p {
     opacity: 0.7;
     size: .9rem;
@@ -142,6 +146,133 @@ h3 {
     margin: 5px 5px;
     border: 2px solid transparent;
     outline: none;
+}
+
+// Options Modal
+#optionsModal {
+    #section {
+        padding: 10px 0;
+        background-color: rgba(11, 121, 255, 0.25);
+    }
+    #datePicker {
+        font-family: "Roboto", sans-serif;
+        border-radius: 10px;
+        border-width: 0;
+        box-shadow: 12px 12px 16px 0 var(--shadow), -8px -8px 12px 0 rgba(255, 255, 255, 0.3);
+        color: var(--dark-blue);
+        width: 100%;
+        padding-right: 5px;
+        outline: none;
+    }
+     ::-webkit-datetime-edit-text {
+        color: var(--light-blue);
+        padding: 0 0.3em;
+    }
+    // ::-webkit-datetime-edit-month-field {
+    //   color: var(--dark-blue);
+    // }
+    // ::-webkit-datetime-edit-year-field {
+    //   color: var(--dark-blue);
+    // }
+    // ::-webkit-datetime-edit-fields-wrapper {
+    // background: silver;
+    // }
+     ::-webkit-datetime-edit {
+        padding: 1em;
+    }
+    #title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 10px;
+        margin: 0;
+        color: var(--light-blue);
+        i {
+            transition: transform 0.4s;
+            cursor: pointer;
+        }
+        i:hover {
+            transform: rotate(360deg);
+            -webkit-transform: rotate(360deg);
+        }
+        p {
+            font-size: 0.75rem;
+        }
+    }
+    #row {
+        display: grid;
+        grid-template-columns: 20% 20% 15% 15% 15% 15%;
+        grid-template-rows: auto;
+        grid-template-areas: "left left right right right right";
+        #left {
+            grid-area: left;
+            h3,
+            h4 {
+                margin: 10px 0 0 10px;
+                color: var(--light-blue);
+            }
+            p {
+                margin: 5px 0 10px 10px;
+                font-size: 0.85rem;
+                color: var(--light-blue);
+                opacity: 0.65;
+            }
+        }
+        #right {
+            align-self: center;
+            grid-area: right;
+            margin: 5px 15px 0 15px;
+            p {
+                padding: 10px;
+                color: rgba(0, 115, 255, 0.99);
+                background-color: white;
+                border-radius: 5px;
+                box-shadow: 12px 12px 16px 0 var(--shadow), -8px -8px 12px 0 rgba(255, 255, 255, 0.3);
+                transition: 0.3s;
+                cursor: pointer;
+            }
+            p:hover {
+                background-color: rgba(255, 255, 255, 0.8);
+            }
+        }
+    }
+    #section.purple {
+        background-color: rgba(245, 31, 120, 0.25);
+    }
+    .purple {
+        #title {
+            color: var(--purple);
+        }
+        #row {
+            #left {
+                h3,
+                p {
+                    color: var(--purple);
+                }
+            }
+        }
+    }
+    .input-text {
+        height: 80%;
+        width: 100%;
+        margin: 5px 5px;
+        box-shadow: 12px 12px 16px 0 var(--shadow), -8px -8px 12px 0 rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        border-width: 0;
+        padding: 1rem;
+        color: var(--dark-blue);
+        outline: none;
+    }
+}
+
+// Modal
+.vm {
+    border-radius: 10px;
+    max-width: 900px !important;
+}
+
+.vm-content {
+    padding: 0 !important;
 }
 
 // Date picker styles override

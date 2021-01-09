@@ -11,6 +11,13 @@ export default new Vuex.Store({
             email: String,
         },
         inputs: [],
+        settings: {
+            startDate: "2021-01-29",
+            endDate: "2021-05-22",
+            collegeName: "",
+            collegeAddress: "",
+            duration: "",
+        }
     },
     mutations: {
         saveCalendar(state, calendarId) {
@@ -27,6 +34,21 @@ export default new Vuex.Store({
         },
         addInput(state, input) {
             state.inputs.push(input);
+        },
+        updateStartDate(state, startDate) {
+            state.settings.startDate = startDate;
+        },
+        updateEndDate(state, endDate) {
+            state.settings.endDate = endDate;
+        },
+        updateCollegeName(state, collegeName) {
+            state.settings.collegeName = collegeName;
+        },
+        updateCollegeAddress(state, collegeAddress) {
+            state.settings.collegeAddress = collegeAddress;
+        },
+        updateDuration(state, duration) {
+            state.settings.duration = duration;
         }
     },
     actions: {},

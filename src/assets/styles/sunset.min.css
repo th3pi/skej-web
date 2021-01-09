@@ -1,11 +1,11 @@
 :root {
-    --pwa-underline: #ff6b00;
-    --pwa-animation-duration: 0.4s;
+    --pwa-underline: rgb(245, 31, 120);
+    --pwa-animation-duration: 0.2s;
     --pwa-width: 2px;
     --pwa-original-background: #f0f0f0;
-    --pwa-animated-background: #ff6b00;
+    --pwa-animated-background: rgb(245, 31, 120);
     --pwa-to-center-original-color: #f0f0f0;
-    --pwa-to-center-animated-color: #ff6b00;
+    --pwa-to-center-animated-color: rgb(245, 31, 120);
     --pwa-2D-grow: 1.1;
     --pwa-2D-shrink: 0.9;
     --pwa-2D-pulse-min: 0.9;

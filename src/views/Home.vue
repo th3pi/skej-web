@@ -1,5 +1,20 @@
 <template>
   <div>
+    <div id="nav" v-if="status === 'loggedIn'">
+      <a
+        id="settingsButton"
+        v-on:click="showOptions = true"
+        class="pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft"
+        >Settings</a
+      >
+      ·
+      <a
+        id="settingsButton"
+        v-on:click="logout"
+        class="pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft"
+        >Logout</a
+      >
+    </div>
     <div id="logo">SKÉJ</div>
     <p>Easy schedule management tool</p>
     <div class="form">
@@ -42,16 +57,29 @@
       </fade-transition>
 
       <!-- Logout button -->
-      <input
-        id="logoutButton"
-        v-if="authStatus"
-        name="logoutButton"
-        class="button text"
-        type="button"
-        v-on:click="logout"
-        value="Disconnect"
-      />
+      <a
+        id="faqButton"
+        v-on:click="showFaq = true"
+        class="pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft"
+        >What can I say?</a
+      >
     </div>
+    <modal
+      v-model="showFaq"
+      title="Here's how to use Skéj"
+      inClass="animate__animated animate__backInRight animate__faster"
+      outClass="animate__animated animate__backOutRight animate__faster"
+    >
+      <faq />
+    </modal>
+    <modal
+      v-model="showOptions"
+      title="Settings"
+      inClass="animate__animated animate__backInRight animate__faster"
+      outClass="animate__animated animate__backOutRight animate__faster"
+    >
+      <settings />
+    </modal>
   </div>
 </template>
 
@@ -59,10 +87,11 @@
 import input_processor from "@/mixins/input_processor.js";
 import { EventBus } from "@/bus/bus";
 import { FadeTransition } from "vue2-transitions";
-
+import Faq from "./Faq.vue";
+import Settings from "./Settings.vue";
 export default {
   name: "Home",
-  components: { FadeTransition },
+  components: { FadeTransition, Faq, Settings },
   mixins: [input_processor],
   data() {
     return {
@@ -74,6 +103,9 @@ export default {
       sendButtonText: "Submit", // User input text field submit button
       eventLink: null, // Event link after it gets added to calendar
       qCursor: this.$store.state.inputs.length, // Cursor to indicate index of current input
+      showOptions: false,
+      showFaq: false,
+      authenticated: false,
     };
   },
   methods: {
@@ -85,11 +117,6 @@ export default {
         gapi.auth2
           .getAuthInstance()
           .signIn()
-          .then((event) => {
-            this.$store.commit("saveUser", event.wt.fV, event.wt.cu);
-            this.status = "loggedIn";
-            this.authStatus = true;
-          })
           .catch((error) => {
             this.status = "loginFailed";
             this.authStatus = false;
@@ -100,6 +127,11 @@ export default {
               }, 5000);
             }
           });
+        gapi.auth2.getAuthInstance().isSignedIn.listen(() => {
+          this.fetchCollegeCalendar(gapi);
+          this.status = "loggedIn";
+          this.authStatus = true;
+        });
       });
     },
     /**
@@ -107,10 +139,8 @@ export default {
      */
     logout() {
       this.$gapi.getGapiClient().then((gapi) => {
+        EventBus.$emit("logout");
         gapi.auth2.getAuthInstance().signOut();
-        this.status = "notLoggedIn";
-        this.$store.commit("clearStorage");
-        this.authStatus = false;
       });
     },
     /**
@@ -177,6 +207,12 @@ export default {
           this.status = "addFailed";
           this.authButtonText = "Oops, that didn't work";
         }
+      });
+      EventBus.$on("copy-sample", (data) => (this.q = data));
+      EventBus.$on("logout", () => {
+        this.status = "notLoggedIn";
+        this.$store.commit("clearStorage");
+        this.authStatus = false;
       });
     },
     /**
@@ -332,6 +368,24 @@ export default {
       // If an event was added and user makes changes to the user input, app status resets to allow user to submit another input
       if (this.status !== "loggedIn") {
         this.status = "loggedIn";
+      }
+    },
+    showFaq(current) {
+      if (current) {
+        document.getElementById("faqButton").className =
+          "pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft modal-active";
+      } else {
+        document.getElementById("faqButton").className =
+          "pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft";
+      }
+    },
+    showOptions(current) {
+      if (current) {
+        document.getElementById("settingsButton").className =
+          "pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft modal-active";
+      } else {
+        document.getElementById("settingsButton").className =
+          "pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft";
       }
     },
   },
