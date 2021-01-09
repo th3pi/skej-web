@@ -2,9 +2,46 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
+      <a v-on:click="showFaq = true">What can I say?</a>
       <a v-on:click="showOptions = true">Settings</a>
     </div>
     <router-view />
+    <modal
+      v-model="showFaq"
+      title="Here's how to use Skéj"
+      inClass="animate__animated animate__backInRight animate__faster"
+      outClass="animate__animated animate__backOutRight animate__faster"
+    >
+      <div id="optionsModal">
+        <div id="section">
+          <div id="title">
+            <h2>Setting up your schedule</h2>
+          </div>
+          <div id="row">
+            <div id="left">
+              <h4>Adding weekly classes</h4>
+            </div>
+            <div id="right"></div>
+          </div>
+          <div id="row">
+            <div id="left">
+              <h4>Adding a single class</h4>
+            </div>
+            <div id="right"></div>
+          </div>
+          <div id="row">
+            <div id="left">
+              <h4>Adding a special event</h4>
+              <p>
+                Special one-off events like quiz, midterm, exam, assignment,
+                report, paper etc.
+              </p>
+            </div>
+            <div id="right"></div>
+          </div>
+        </div>
+      </div>
+    </modal>
     <modal
       v-model="showOptions"
       title="Settings"
@@ -107,7 +144,8 @@
 export default {
   data() {
     return {
-      showOptions: true,
+      showOptions: false,
+      showFaq: true,
       startDate: "2021-01-29",
       endDate: "2021-05-22",
     };
@@ -213,7 +251,8 @@ export default {
     grid-template-areas: "left left right right right right";
     #left {
       grid-area: left;
-      h3 {
+      h3,
+      h4 {
         margin: 10px 0 0 10px;
         color: var(--light-blue);
       }
