@@ -14,7 +14,9 @@ export default {
   },
   methods: {},
   watch: {},
-  created() {},
+  created() {
+    document.title = "Skéj";
+  },
 };
 </script>
 <style lang="scss">

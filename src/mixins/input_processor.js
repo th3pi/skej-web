@@ -7,7 +7,7 @@ export default {
         }
     },
     methods: {
-        processInput(input, gapi) {
+        processInput(input, gapi, duration = 75) {
             this.gapi = gapi;
             let intent = input.intents[0].name;
             let entities = input.entities;
@@ -19,7 +19,7 @@ export default {
 
             // User's intention is to create a recurring course schedule
             else if (intent === 'course_schedule') {
-                this.processCourseSchedule(entities)
+                this.processCourseSchedule(entities, duration)
             }
 
             // User's intention is to add a work due event to the calendar
@@ -64,7 +64,7 @@ export default {
          * Processes creating recurring class event operation for an entire semester
          * @param {Object} entities All the entities processed by the nlp
          */
-        processCourseSchedule(entities) {
+        processCourseSchedule(entities, duration) {
             EventBus.$emit("adding-event")
             let days = []
             let eventDetails = {};
@@ -78,8 +78,8 @@ export default {
             let startDate = this.getStartDate(entities['time:time'][0].value, daysArray)
             eventDetails.start = startDate
             eventDetails.end = new Date(startDate);
-            eventDetails.end.setHours(eventDetails.start.getHours() + 1)
-            eventDetails.end.setMinutes(eventDetails.start.getMinutes() + 15)
+            eventDetails.end.setHours(eventDetails.start.getHours() + Math.floor(duration / 60))
+            eventDetails.end.setMinutes(eventDetails.start.getMinutes() + duration % 60)
             eventDetails.summary = `${courseName} - Lecture`
             eventDetails.description = `Recurring ${courseName} lecture added to calendar by Skéj.\n Event ID: skej#${eventDetails.courseName}/${Math.floor(Math.random() * 10001)}`
             eventDetails.recurrence = [rRule];
@@ -242,6 +242,7 @@ export default {
         /**
          * Generates a recurrence rule string based off the schedule. Recurrence occurs until CUNY's last day of semester
          * @param {Array} daysArray An array containing all the days in the week the event will occur
+         * REMINDER: Month index starts at 0. So January = 0, March = 2 etc.
          */
         convertToRRule(daysArray) {
             let recurrence = 'RRULE:FREQ=WEEKLY;BYDAY='

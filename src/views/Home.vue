@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="nav" v-if="status === 'loggedIn'">
+    <div id="nav" v-if="authStatus">
       <a
         id="settingsButton"
         v-on:click="showOptions = true"
@@ -74,7 +74,7 @@
     </modal>
     <modal
       v-model="showOptions"
-      title="Settings"
+      title="Settings (settings are saved automatically)"
       inClass="animate__animated animate__backInRight animate__faster"
       outClass="animate__animated animate__backOutRight animate__faster"
     >
@@ -127,10 +127,15 @@ export default {
               }, 5000);
             }
           });
-        gapi.auth2.getAuthInstance().isSignedIn.listen(() => {
-          this.fetchCollegeCalendar(gapi);
-          this.status = "loggedIn";
-          this.authStatus = true;
+        gapi.auth2.getAuthInstance().isSignedIn.listen((res) => {
+          if (res) {
+            this.fetchCollegeCalendar(gapi);
+            this.status = "loggedIn";
+            this.authStatus = true;
+          } else {
+            this.status = "notLoggedIn";
+            this.authStatus = false;
+          }
         });
       });
     },
@@ -139,7 +144,6 @@ export default {
      */
     logout() {
       this.$gapi.getGapiClient().then((gapi) => {
-        EventBus.$emit("logout");
         gapi.auth2.getAuthInstance().signOut();
       });
     },
@@ -182,7 +186,13 @@ export default {
         this.$store.commit("addInput", this.q);
         this.qCursor = this.$store.state.inputs.length;
         this.$gapi.getGapiClient().then((gapi) => {
-          this.processInput(res.data, gapi);
+          this.processInput(
+            res.data,
+            gapi,
+            this.$store.state.settings.duration === ""
+              ? 75
+              : this.$store.state.settings.duration
+          );
         });
       });
     },

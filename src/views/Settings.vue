@@ -36,7 +36,7 @@
       <div id="row">
         <div id="left">
           <h3>Class Duration</h3>
-          <p>General length of most classes</p>
+          <p>General length of most classes in minutes</p>
         </div>
         <div id="right">
           <input
@@ -44,7 +44,7 @@
             name="classDuration"
             id="classDuration"
             class="input-text"
-            placeholder="e.g 90 minutes"
+            placeholder="e.g 75"
             v-model="duration"
           />
         </div>
