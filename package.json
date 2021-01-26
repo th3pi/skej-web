@@ -10,7 +10,10 @@
   "dependencies": {
     "@kouts/vue-modal": "^2.0.1",
     "animate.css": "^4.1.1",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "node-sass": "^5.0.0",
+    "sass-loader": "^10.1.1",
     "vue": "^2.6.11",
     "vue-gapi": "^1.0.0",
     "vue-router": "^3.4.9",
