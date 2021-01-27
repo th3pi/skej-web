@@ -180,7 +180,7 @@ export default {
         method: "GET",
         url: `https://api.wit.ai/message?q=${this.q}&v=${date}`,
         headers: {
-          Authorization: "Bearer NPZBD422SPC72CZGL2ITSYJYKJC4ION6",
+          Authorization: this.$wit,
         },
       }).then((res) => {
         this.$store.commit("addInput", this.q);
