@@ -27,27 +27,30 @@
 
         <!-- Send button sends processes user input -->
         <!-- Displayed Submit button by default. Changes based context  -->
-        <input
+        <button
           id="sendButton"
           class="button"
           type="button"
           v-on:click="sendButtonAction"
           :value="sendButtonText"
           disabled
-        />
+        >
+          Submit
+        </button>
       </div>
       <div id="google_oauth">
         <!-- Authentication and User feedback button -->
         <!-- If user is not logged in -->
         <fade-transition mode="out-in" :duration="200">
-          <input
+          <button
             id="authButton"
             name="authButton"
             class="button"
             type="button"
-            :value="authButtonText"
             v-on:click="authButtonAction"
-          />
+          >
+            {{ authButtonText }}
+          </button>
         </fade-transition>
 
         <!-- FAQ button -->
