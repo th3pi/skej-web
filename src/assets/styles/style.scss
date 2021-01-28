@@ -85,6 +85,12 @@ body {
     text-shadow: 0.5px .5px 0px #0b79ff, 1px 1px 0px #1f6dce, 1.5px 1.5px 0px #c4098c, -0.5px -.5px 0px #f51f78, -1px -1px 0px #f51f78, -1.5px -1.5px 0px #eb00a4;
 }
 
+input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
 a {
     cursor: pointer;
 }

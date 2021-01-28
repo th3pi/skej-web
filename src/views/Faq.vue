@@ -68,4 +68,28 @@ export default {
 </script>
 
 <style lang="scss">
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+  #optionsModal {
+    h2 {
+      font-size: 1.5rem;
+    }
+    #row {
+      grid-template-columns: 100%;
+      grid-template-rows: min-content;
+      grid-template-areas:
+        "left"
+        "left"
+        "right"
+        "right"
+        "right";
+    }
+    #left,
+    #right {
+      p {
+        margin: 5px;
+      }
+    }
+  }
+}
 </style>
