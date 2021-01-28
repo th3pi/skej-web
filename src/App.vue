@@ -1,8 +1,9 @@
 <template>
   <div id="app">
     <transition
-      enter-active-class="animate__animated animate__backInRight animate__faster"
-      leave-active-class="animate__animated animate__backOutRight animate__faster"
+      enter-active-class="animate__animated animate__fadeIn animate__faster"
+      leave-active-class="animate__animated animate__fadeOut animate__faster"
+      mode="out-in"
     >
       <router-view />
     </transition>
@@ -35,8 +36,4 @@ export default {
   color: #2c3e50;
   width: 100%;
 }
-
-// #nav a.router-link-exact-active {
-//   color: #42b983;
-// }
 </style>

@@ -10,7 +10,7 @@
           <div
             id="backButton"
             class="button"
-            style="padding: 5px"
+            style="padding: 2.5px 10px"
             @click="$router.go(-1)"
           >
             <h4>
@@ -242,5 +242,8 @@ h2,
 h3 {
   color: var(--dark-blue);
   text-shadow: none;
+}
+h4 {
+  margin: 0;
 }
 </style>

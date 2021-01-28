@@ -7,9 +7,6 @@
         @click="$router.push({ name: 'Settings' }).catch(() => {})"
         ><i class="fas fa-cog"></i
       ></a>
-      <popover name="settings" :width="500">
-        <settings />
-      </popover>
     </div>
     <div id="mainBody">
       <div id="logo">SKÉJ</div>
@@ -79,10 +76,9 @@ import input_processor from "@/mixins/input_processor.js";
 import { EventBus } from "@/bus/bus";
 import { FadeTransition } from "vue2-transitions";
 import Faq from "./Faq.vue";
-import Settings from "./Settings.vue";
 export default {
   name: "Home",
-  components: { FadeTransition, Faq, Settings },
+  components: { FadeTransition, Faq },
   mixins: [input_processor],
   data() {
     return {
