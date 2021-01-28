@@ -2,6 +2,18 @@
   <div id="optionsModal">
     <div id="section">
       <div id="title">
+        <h1>
+          <span><i class="fas fa-cog"></i></span> Settings
+        </h1>
+        <p v-if="!this.openedPage">Modifications are saved automatically</p>
+        <div v-else class="button" style="padding: 5px">
+          <h4><i class="fas fa-long-arrow-alt-left"> </i> Go Back</h4>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div id="section">
+      <div id="title">
         <h2>Semester</h2>
         <i class="fas fa-redo" v-on:click="resetDates"></i>
       </div>
@@ -50,7 +62,8 @@
         </div>
       </div>
     </div>
-    <div id="section" class="purple">
+    <div class="divider"></div>
+    <div id="section">
       <div id="title">
         <h2>College</h2>
         <p>Details to put into event description</p>
@@ -99,6 +112,7 @@ export default {
       collegeName: this.$store.state.settings.collegeName,
       collegeAddress: this.$store.state.settings.collegeAddress,
       duration: this.$store.state.settings.duration,
+      openedPage: null,
     };
   },
   methods: {
@@ -130,6 +144,18 @@ export default {
     this.collegeName = this.$store.state.settings.collegeName;
     this.collegeAddress = this.$store.state.settings.collegeAddress;
     this.duration = this.$store.state.settings.duration;
+    if (this.$route.fullPath === "/settings") {
+      this.openedPage = true;
+    } else {
+      this.openedPage = false;
+    }
   },
 };
 </script>
+<style lang="scss">
+h2,
+h3 {
+  color: var(--dark-blue);
+  text-shadow: none;
+}
+</style>

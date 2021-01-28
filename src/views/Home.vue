@@ -3,7 +3,7 @@
     <div id="nav" v-if="authStatus">
       <a
         id="settingsButton"
-        v-on:click="showOptions = true"
+        v-popover:settings.bottom="'Customize event details'"
         class="pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft"
         >Settings</a
       >
@@ -14,6 +14,10 @@
         class="pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft"
         >Logout</a
       >
+
+      <popover name="settings" :width="500">
+        <settings />
+      </popover>
     </div>
     <div id="logo">SKÉJ</div>
     <p>Easy schedule management tool</p>
@@ -71,14 +75,6 @@
       outClass="animate__animated animate__backOutRight animate__faster"
     >
       <faq />
-    </modal>
-    <modal
-      v-model="showOptions"
-      title="Settings (settings are saved automatically)"
-      inClass="animate__animated animate__backInRight animate__faster"
-      outClass="animate__animated animate__backOutRight animate__faster"
-    >
-      <settings />
     </modal>
   </div>
 </template>

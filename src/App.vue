@@ -1,6 +1,11 @@
 <template>
   <div id="app">
-    <router-view />
+    <transition
+      enter-active-class="animate__animated animate__backInRight animate__faster"
+      leave-active-class="animate__animated animate__backOutRight animate__faster"
+    >
+      <router-view />
+    </transition>
   </div>
 </template>
 <script>

@@ -8,12 +8,14 @@ import VueModal from '@kouts/vue-modal'
 import VueyeDatePicker from 'vueye-datepicker'
 import VueComp from '@vue/composition-api';
 import api from './api_keys'
+import VPopover from 'vue-js-popover'
 
 import '@kouts/vue-modal/dist/vue-modal.css'
 import 'animate.css'
 Vue.prototype.$http = axios;
 Vue.prototype.$wit = api.wit;
 Vue.config.productionTip = false
+Vue.use(VPopover, { tooltip: true })
 Vue.component('modal', VueModal)
 Vue.component('date-picker', VueyeDatePicker)
 Vue.use(VueComp);
