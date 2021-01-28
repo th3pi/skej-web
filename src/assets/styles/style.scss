@@ -93,6 +93,12 @@ input {
 
 a {
     cursor: pointer;
+    transition: 0.2s;
+}
+
+a:hover {
+    color: var(--dark-blue);
+    text-shadow: 0.1px .1px 0px #0b79ff, .25px .25px 0px #1f6dce, .1px 1.1px 0px #c4098c, -0.5px -.5px 0px #f51f78, -1px -1px 0px #f51f78, -.1px -.1px 0px #eb00a4;
 }
 
 p {

@@ -1,13 +1,5 @@
 <template>
   <div id="home">
-    <div id="nav" v-if="authStatus">
-      <a
-        id="settingsButton"
-        class="button"
-        @click="$router.push({ name: 'Settings' }).catch(() => {})"
-        ><i class="fas fa-cog"></i
-      ></a>
-    </div>
     <div id="mainBody">
       <div id="logo">SKÉJ</div>
       <p>Easy schedule management tool</p>
@@ -52,13 +44,20 @@
             {{ authButtonText }}
           </button>
         </fade-transition>
-
+        <strong v-if="authStatus">|</strong>
+        <a
+          style="margin: 0 5px"
+          @click="$router.push({ name: 'Settings' }).catch(() => {})"
+          v-if="authStatus"
+          >Settings</a
+        >
+        <strong v-if="authStatus">|</strong>
         <!-- FAQ button -->
         <a
           id="faqButton"
           v-if="authStatus"
           v-on:click="$modal.show('faq')"
-          class="pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft"
+          style="margin-left: 5px"
           >What can I say?</a
         >
       </div>
