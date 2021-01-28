@@ -3,16 +3,14 @@ import App from './App.vue'
 import router from './router'
 import VueGapi from 'vue-gapi'
 import store from './store'
-import axios from 'axios'
-import VueModal from '@kouts/vue-modal'
 import api from './api_keys'
+import vmodal from 'vue-js-modal'
 
-import '@kouts/vue-modal/dist/vue-modal.css'
 import 'animate.css'
-Vue.prototype.$http = axios;
+
 Vue.prototype.$wit = api.wit;
 Vue.config.productionTip = false
-Vue.component('modal', VueModal)
+Vue.use(vmodal, { componentName: 'modal' })
 Vue.use(VueGapi, {
     apiKey: api.gapi,
     clientId: api.gClientId,

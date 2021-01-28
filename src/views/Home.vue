@@ -54,17 +54,12 @@
         <a
           id="faqButton"
           v-if="authStatus"
-          v-on:click="showFaq = true"
+          v-on:click="$modal.show('faq')"
           class="pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft"
           >What can I say?</a
         >
       </div>
-      <modal
-        v-model="showFaq"
-        title="Here's how to use Skéj"
-        inClass="animate__animated animate__backInRight animate__faster"
-        outClass="animate__animated animate__backOutRight animate__faster"
-      >
+      <modal name="faq" height="auto" :adaptive="true">
         <faq />
       </modal>
     </div>

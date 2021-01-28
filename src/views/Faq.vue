@@ -3,6 +3,7 @@
     <div id="section">
       <div id="title">
         <h2>Setting up your schedule</h2>
+        <p>Click on an example to copy</p>
       </div>
       <div id="row">
         <div id="left">
@@ -13,7 +14,9 @@
           </p>
         </div>
         <div id="right">
-          <p v-on:click="copySample(0)">{{ samples[0] }}</p>
+          <p v-on:click="copySample(0)">
+            {{ samples[0] }}
+          </p>
         </div>
       </div>
       <div id="row">
@@ -34,7 +37,9 @@
           </p>
         </div>
         <div id="right">
-          <p v-on:click="copySample(2)">{{ samples[2] }}</p>
+          <p v-on:click="copySample(2)">
+            I have a CS323 <strong>assignment</strong> due by next Friday 5pm
+          </p>
         </div>
       </div>
     </div>
