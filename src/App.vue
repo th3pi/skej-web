@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <transition
-      enter-active-class="animate__animated animate__fadeIn animate__faster"
-      leave-active-class="animate__animated animate__fadeOut animate__faster"
+      enter-active-class="animate__animated animate__fadeIn"
+      leave-active-class="animate__animated animate__fadeOut"
       mode="out-in"
     >
       <router-view />
@@ -35,5 +35,9 @@ export default {
   text-align: center;
   color: #2c3e50;
   width: 100%;
+}
+.animate__animated.animate__fadeIn,
+.animate__animated.animate__fadeOut {
+  animation-duration: 0.1s;
 }
 </style>
