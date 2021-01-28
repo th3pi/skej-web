@@ -164,7 +164,7 @@ Skéj is far from complete. Below is a roadmap for all the features that I inten
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. However Skéj is a **deeply personal project**. If you have any suggestions please feel free to create an issue or email me at tanjim@bhyn.dev.
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. However Skéj is a **deeply personal project**, so public contributions are not allowed. If you have any suggestions please feel free to create an issue or email me at tanjim@bhyn.dev.
 
 <!-- LICENSE -->
 ## License
@@ -173,6 +173,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@tanjim_b](https://twitter.com/tanjim_b) - tanjim@bhyn.dev
+Tanjimul Bhuiyan - Twitter: [@tanjim_b](https://twitter.com/tanjim_b) - Email: tanjim@bhyn.dev
 
 Project Link: [https://github.com/th3pi/skej-web](https://github.com/th3pi/skej-web)
