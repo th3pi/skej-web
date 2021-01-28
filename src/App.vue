@@ -36,30 +36,6 @@ export default {
   width: 100%;
 }
 
-#nav {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-}
-
-#nav a {
-  font-weight: bold;
-  color: var(--dark-blue);
-  margin: 5px 10px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-#nav a:hover {
-  opacity: 0.85;
-}
-
-#nav a.modal-active {
-  color: var(--purple);
-}
-
 // #nav a.router-link-exact-active {
 //   color: #42b983;
 // }

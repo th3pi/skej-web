@@ -1,81 +1,76 @@
 <template>
-  <div>
+  <div id="home">
     <div id="nav" v-if="authStatus">
       <a
         id="settingsButton"
-        v-popover:settings.bottom="'Customize event details'"
-        class="pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft"
-        >Settings</a
-      >
-      ·
-      <a
-        id="settingsButton"
-        v-on:click="logout"
-        class="pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft"
-        >Logout</a
-      >
-
+        class="button"
+        @click="$router.push({ name: 'Settings' }).catch(() => {})"
+        ><i class="fas fa-cog"></i
+      ></a>
       <popover name="settings" :width="500">
         <settings />
       </popover>
     </div>
-    <div id="logo">SKÉJ</div>
-    <p>Easy schedule management tool</p>
-    <div class="form">
-      <!-- User input text box -->
-      <input
-        id="q"
-        class="text-box"
-        name="q"
-        type="text"
-        placeholder="Ex: I have a CS340 class at 5:40pm on Fridays and Saturdays"
-        v-model="q"
-        v-on:keyup.enter="sendButtonAction"
-        v-on:keydown.up="getPrevInput"
-        v-on:keydown.down="getNextInput"
-      />
-
-      <!-- Send button sends processes user input -->
-      <!-- Displayed Submit button by default. Changes based context  -->
-      <input
-        id="sendButton"
-        class="button"
-        type="button"
-        v-on:click="sendButtonAction"
-        :value="sendButtonText"
-        disabled
-      />
-    </div>
-    <div id="google_oauth">
-      <!-- Authentication and User feedback button -->
-      <!-- If user is not logged in -->
-      <fade-transition mode="out-in" :duration="200">
+    <div id="mainBody">
+      <div id="logo">SKÉJ</div>
+      <p>Easy schedule management tool</p>
+      <div class="form">
+        <!-- User input text box -->
         <input
-          id="authButton"
-          name="authButton"
+          id="q"
+          class="text-box"
+          name="q"
+          type="text"
+          placeholder="Ex: I have a CS340 class at 5:40pm on Fridays and Saturdays"
+          v-model="q"
+          v-on:keyup.enter="sendButtonAction"
+          v-on:keydown.up="getPrevInput"
+          v-on:keydown.down="getNextInput"
+        />
+
+        <!-- Send button sends processes user input -->
+        <!-- Displayed Submit button by default. Changes based context  -->
+        <input
+          id="sendButton"
           class="button"
           type="button"
-          :value="authButtonText"
-          v-on:click="authButtonAction"
+          v-on:click="sendButtonAction"
+          :value="sendButtonText"
+          disabled
         />
-      </fade-transition>
+      </div>
+      <div id="google_oauth">
+        <!-- Authentication and User feedback button -->
+        <!-- If user is not logged in -->
+        <fade-transition mode="out-in" :duration="200">
+          <input
+            id="authButton"
+            name="authButton"
+            class="button"
+            type="button"
+            :value="authButtonText"
+            v-on:click="authButtonAction"
+          />
+        </fade-transition>
 
-      <!-- Logout button -->
-      <a
-        id="faqButton"
-        v-on:click="showFaq = true"
-        class="pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft"
-        >What can I say?</a
+        <!-- FAQ button -->
+        <a
+          id="faqButton"
+          v-if="authStatus"
+          v-on:click="showFaq = true"
+          class="pwa-element pwa-borders-borderBottom-easeInFromLeft-easeOutToLeft"
+          >What can I say?</a
+        >
+      </div>
+      <modal
+        v-model="showFaq"
+        title="Here's how to use Skéj"
+        inClass="animate__animated animate__backInRight animate__faster"
+        outClass="animate__animated animate__backOutRight animate__faster"
       >
+        <faq />
+      </modal>
     </div>
-    <modal
-      v-model="showFaq"
-      title="Here's how to use Skéj"
-      inClass="animate__animated animate__backInRight animate__faster"
-      outClass="animate__animated animate__backOutRight animate__faster"
-    >
-      <faq />
-    </modal>
   </div>
 </template>
 
@@ -135,34 +130,30 @@ export default {
         });
       });
     },
-    /**
-     * Logs out user
-     */
-    logout() {
-      this.$gapi.getGapiClient().then((gapi) => {
-        gapi.auth2.getAuthInstance().signOut();
-      });
-    },
+
     /**
      * Gets the secondary college calendar id from user's Google Calendar Account
      * Creates a College calendar if it doesn't exist already
      */
     fetchCollegeCalendar(gapi) {
       gapi.client.calendar.calendarList.list().execute((event) => {
-        if (event.items.find((el) => el.summary === "College")) {
+        let collegeName = this.$store.state.settings.collegeName;
+        if (collegeName === "") collegeName = "College";
+        if (event.items.find((el) => el.summary === collegeName)) {
           this.$store.commit(
             "saveCalendar",
-            event.items.find((el) => el.summary === "College").id
+            event.items.find((el) => el.summary === collegeName).id
           );
         } else {
           gapi.client.calendar.calendars
-            .insert({ summary: "College" })
+            .insert({ summary: collegeName })
             .execute((event) => {
               this.$store.commit("saveCalendar", event.id);
             });
         }
       });
     },
+
     /**
      * Sends the user input to work with wit.ai and then Google Calendar
      */
@@ -215,11 +206,6 @@ export default {
         }
       });
       EventBus.$on("copy-sample", (data) => (this.q = data));
-      EventBus.$on("logout", () => {
-        this.status = "notLoggedIn";
-        this.$store.commit("clearStorage");
-        this.authStatus = false;
-      });
     },
     /**
      * Opens event on Google Calendar in a new tab

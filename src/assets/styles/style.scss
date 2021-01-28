@@ -23,10 +23,53 @@ html {
 
 body {
     height: 100%;
+}
+
+#app {
+    height: 100%;
+}
+
+#home {
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 100%;
+    height: 100%;
+    width: 100%;
+}
+
+#mainBody {
+    width: 100%;
+    align-self: center;
+    justify-self: center;
+}
+
+#nav {
+    position: absolute;
+    right: 0;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-self: flex-end;
     align-items: center;
+    .button {
+        padding: 5px;
+    }
+    .button:hover {
+        color: white;
+    }
+}
+
+#nav a {
+    font-weight: bold;
+    color: var(--dark-blue);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#nav a:hover {
+    opacity: 0.85;
+}
+
+#nav a.modal-active {
+    color: var(--purple);
 }
 
 #logo {
