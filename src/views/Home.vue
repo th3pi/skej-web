@@ -40,7 +40,10 @@
             type="button"
             v-on:click="authButtonAction"
           >
-            {{ authButtonText }}
+            <g-logo v-if="authStatus === false" />
+            <p>
+              {{ authButtonText }}
+            </p>
           </button>
         </fade-transition>
         <strong v-if="authStatus">|</strong>
@@ -59,6 +62,14 @@
           style="margin-left: 5px"
           >What can I say?</a
         >
+        <strong style="margin-left: 5px">|</strong>
+        <!-- Privacy button -->
+        <a
+          id="privacyButton"
+          @click="$router.push({ name: 'Privacy' }).catch(() => {})"
+          style="margin-left: 5px"
+          >Privacy</a
+        >
       </div>
       <modal name="faq" height="auto" :adaptive="true">
         <faq />
@@ -73,9 +84,10 @@ import { EventBus } from "@/bus/bus";
 import { FadeTransition } from "vue2-transitions";
 import axios from "axios";
 import Faq from "./Faq.vue";
+import GLogo from "../assets/g-logo.vue";
 export default {
   name: "Home",
-  components: { FadeTransition, Faq },
+  components: { FadeTransition, Faq, GLogo },
   mixins: [input_processor],
   data() {
     return {
@@ -105,9 +117,9 @@ export default {
             this.status = "loginFailed";
             this.authStatus = false;
             if (error.error === "popup_closed_by_user") {
-              this.authButtonText = "Login canceled";
+              this.authButtonText = "Sign in cancelled";
               setTimeout(() => {
-                this.authButtonText = "Login with Google Calendar";
+                this.authButtonText = "Sign in with Google";
               }, 5000);
             }
           });
@@ -292,10 +304,11 @@ export default {
           this.sendMessage,
           true
         );
+        this.authButtonAction = function () {};
       } else if (current === "notLoggedIn") {
-        this.authButtonText = "Login with Google Calendar";
+        this.authButtonText = "Sign in with Google";
         this.authStatus = false;
-        authButton.className = "button";
+        authButton.className = "google-button";
         this.authButtonAction = this.login;
       } else if (current === "added") {
         this.done("Added!", "button button-success", "Open", this.openEvent);

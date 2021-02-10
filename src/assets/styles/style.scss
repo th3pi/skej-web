@@ -37,6 +37,12 @@ body {
     height: 100%;
     width: 100%;
 }
+#scrollableHome{
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 100%;
+    width: 100%;
+}
 
 #mainBody {
     width: 100%;
@@ -132,6 +138,9 @@ h3 {
     border: 2px solid var(--dark-blue);
     background-color: white;
     transition-duration: 0.3s;
+    p{
+        margin: 0;
+    }
 }
 
 .button.text {
@@ -384,4 +393,22 @@ h3 {
 .ve-dp-body--days__values--item--active:hover {
     background: var(--dark-blue) !important;
     opacity: 0.85;
+}
+
+.google-button{
+    svg{
+        float: left;
+    }
+    background-color: #fff;
+    border-radius: 5px;
+    border: 0px solid var(--dark-blue);
+    font-size: 14px;
+    box-shadow: 8px 12px 12px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    transition: 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+    width: 12rem;
+    p{margin-right: 20px;}
+}
+.google-button:hover{
+    box-shadow: 6px 8px 8px rgba(0, 0, 0, 0.25);
 }
