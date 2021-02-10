@@ -22,12 +22,11 @@
         <button
           id="sendButton"
           class="button"
-          type="button"
           v-on:click="sendButtonAction"
           :value="sendButtonText"
           disabled
         >
-          Submit
+          {{ sendButtonText }}
         </button>
       </div>
       <div id="google_oauth">
@@ -72,6 +71,7 @@
 import input_processor from "@/mixins/input_processor.js";
 import { EventBus } from "@/bus/bus";
 import { FadeTransition } from "vue2-transitions";
+import axios from "axios";
 import Faq from "./Faq.vue";
 export default {
   name: "Home",
@@ -156,7 +156,7 @@ export default {
       }${new Date()
         .getDate()
         .toLocaleString(undefined, { minimumIntegerDigits: 2 })}`;
-      this.$http({
+      axios({
         method: "GET",
         url: `https://api.wit.ai/message?q=${this.q}&v=${date}`,
         headers: {
@@ -298,12 +298,7 @@ export default {
         authButton.className = "button";
         this.authButtonAction = this.login;
       } else if (current === "added") {
-        this.done(
-          "Added!",
-          "button button-success",
-          "Open Event",
-          this.openEvent
-        );
+        this.done("Added!", "button button-success", "Open", this.openEvent);
       } else if (current === "working") {
         this.wait("Working...");
       } else if (current === "adding") {

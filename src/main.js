@@ -7,7 +7,6 @@ import api from './api_keys'
 import vmodal from 'vue-js-modal'
 
 import 'animate.css'
-
 Vue.prototype.$wit = api.wit;
 Vue.config.productionTip = false
 Vue.use(vmodal, { componentName: 'modal' })
